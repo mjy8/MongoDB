@@ -1,0 +1,44 @@
+version: '2'
+services:
+  mongoconfig1:
+    container_name: mongoconfig1
+    hostname: mongoconfig1
+    image: mongo
+    command: mongod --configsvr --replSet mongoreplicaset1conf --dbpath /data/db --bind_ip_all --port 27017
+    ports:
+      - 27047:27017
+    expose:
+      - "27017"
+    networks:
+      - "mongobridge"
+    volumes:
+      - /mongodb/mongodb_config/data1:/data/db
+  mongoconfig2:
+    container_name: mongoconfig2
+    hostname: mongoconfig2
+    image: mongo
+    command: mongod --configsvr --replSet mongoreplicaset1conf --dbpath /data/db --bind_ip_all --port 27017
+    ports:
+      - 27057:27017
+    expose:
+      - "27017"
+    networks:
+      - "mongobridge"
+    volumes:
+      - /mongodb/mongodb_config/data2:/data/db
+  mongoconfig3:
+    container_name: mongoconfig3
+    hostname: mongoconfig3
+    image: mongo
+    command: mongod --configsvr --replSet mongoreplicaset1conf --dbpath /data/db --bind_ip_all --port 27017
+    ports:
+      - 27067:27017
+    expose:
+      - "27017"
+    networks:
+      - "mongobridge"
+    volumes:
+      - /mongodb/mongodb_config/data3:/data/db
+networks:
+  mongobridge:
+    driver: bridge

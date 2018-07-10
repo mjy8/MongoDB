@@ -1,0 +1,27 @@
+version: '2'
+services:
+  mongosrouter1:
+    container_name: mongosrouter1
+    hostname: mongosrouter1
+    image: mongo
+    command: mongos --configdb mongoreplicaset1conf/mongoconfig1:27017,mongoconfig2:27017,mongoconfig3:27017 --port 27017 --bind_ip_all
+    ports:
+      - 27077:27017
+    expose:
+      - "27017"
+    networks:
+      - "mongobridge"
+  mongosrouter2:
+    container_name: mongosrouter2
+    hostname: mongosrouter2
+    image: mongo
+    command: mongos --configdb mongoreplicaset1conf/mongoconfig1:27017,mongoconfig2:27017,mongoconfig3:27017 --port 27017 --bind_ip_all
+    ports:
+      - 27078:27017
+    expose:
+      - "27017"
+    networks:
+      - "mongobridge"
+networks:
+  mongobridge:
+    driver: bridge

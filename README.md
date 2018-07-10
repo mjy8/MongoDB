@@ -87,6 +87,7 @@ docker run --hostname mongosrouter2 --network mongo_bridge -p 27087:27017 --name
 bash -c 'mongos --configdb mongoreplicaset1conf/mongoconfig1:27017,mongoconfig2:27017,mongoconfig3:27017 --bind_ip=0.0.0.0,:: --port 27017'
 
 Inititate the Config node replica set:
+
 On one of the config server try to initiate the replica set with rs.initiate(config) members which started with --replSet param.
 This will assign primary and secondary replica set for config servers.
 
@@ -96,6 +97,7 @@ members: [{ _id : 0, host : \"mongoconfig1\" },{ _id : 1, host : \"mongoconfig2\
 
 
 Inititate the Shard node replica set:
+
 On one of the Shard node try to initiate the replica set with rs.initiate(config) members which started with --replSet param.
 This will assign primary and secondary replica set for Shard nodes.
 
@@ -104,6 +106,7 @@ This will assign primary and secondary replica set for Shard nodes.
 members: [{ _id : 0, host : \"mongoshard1\" },{ _id : 1, host : \"mongoshard2\" },{ _id : 2, host : \"mongoshard3\" }]})' | mongo"
 
 Add shards to Router:
+
 Finally we make mongos-router aware of sharded replicaset by sh.addshard().
 Need to run this addshard() on one of the mongos-routers, which initiates the sharded-replicaset in routers so they can talk to these shards.
 

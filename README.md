@@ -24,7 +24,7 @@ docker exec -it mongoconfig1 bash -c "echo 'rs.status()' | mongo"
 docker exec -it mongoshard1 bash -c "echo 'rs.status()' | mongo"
 docker exec -it mongosrouter1 bash -c "echo 'sh.status()' | mongo "
 ```
-## Add shard to the router with script: 
+#### Add shard to the router with script: 
 - InitiateShards.sh ( This will make sure mongos routers are aware of all the sharded replicaset)
 
 ------------------------------------------------------------------------------------------------------------
@@ -46,16 +46,19 @@ These data volumes are created for Shard nodes which maps to /data/db ( using --
 
 ```
 docker run --hostname mongoshard1 --network mongo_bridge -p 27017:27017 --name mongoshard1 
--v /var/lib/docker/volumes/mongodb_shard/_data:/data/db -d mongo bash -c 'mongod --shardsvr --replSet mongoreplicaset1shard --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
+-v /var/lib/docker/volumes/mongodb_shard/_data:/data/db -d mongo bash -c 'mongod --shardsvr
+--replSet mongoreplicaset1shard --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
 ```
 
 ```
 docker run --hostname mongoshard2 --network mongo_bridge -p 27027:27017 --name mongoshard2 
--v /var/lib/docker/volumes/mongodb_shard2/_data:/data/db -d mongo bash -c 'mongod --shardsvr --replSet mongoreplicaset1shard --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
+-v /var/lib/docker/volumes/mongodb_shard2/_data:/data/db -d mongo bash -c 'mongod --shardsvr 
+--replSet mongoreplicaset1shard --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
 ```
 ```
  docker run --hostname mongoshard3 --network mongo_bridge -p 27037:27017 --name mongoshard3 
--v /var/lib/docker/volumes/mongodb_shard3/_data:/data/db -d mongo bash -c 'mongod --shardsvr --replSet mongoreplicaset1shard --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
+-v /var/lib/docker/volumes/mongodb_shard3/_data:/data/db -d mongo bash -c 'mongod --shardsvr 
+--replSet mongoreplicaset1shard --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
 ```
 - These Shards can be primary, secondary/arbiter which stores collection of documents.
 
@@ -70,13 +73,16 @@ docker run --hostname mongoshard2 --network mongo_bridge -p 27027:27017 --name m
 
 ```
  docker run --hostname mongoconfig1 --network mongo_bridge -p 27047:27017 --name mongoconfig1 
--v /var/lib/docker/volumes/mongoconfig1/_data:/data/db -d mongo bash -c 'mongod --configsvr --replSet mongoreplicaset1conf --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
+-v /var/lib/docker/volumes/mongoconfig1/_data:/data/db -d mongo bash -c 'mongod --configsvr 
+--replSet mongoreplicaset1conf --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
 
 docker run --hostname mongoconfig2 --network mongo_bridge -p 27057:27017 --name mongoconfig2 
--v /var/lib/docker/volumes/mongoconfig2/_data:/data/db -d mongo bash -c 'mongod --configsvr --replSet mongoreplicaset1conf --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
+-v /var/lib/docker/volumes/mongoconfig2/_data:/data/db -d mongo bash -c 'mongod --configsvr 
+--replSet mongoreplicaset1conf --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
  
 docker run --hostname mongoconfig3 --network mongo_bridge -p 27067:27017 --name mongoconfig3 
--v /var/lib/docker/volumes/mongoconfig3/_data:/data/db -d mongo bash -c 'mongod --configsvr --replSet mongoreplicaset1conf --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
+-v /var/lib/docker/volumes/mongoconfig3/_data:/data/db -d mongo bash -c 'mongod --configsvr 
+--replSet mongoreplicaset1conf --dbpath /data/db --bind_ip=0.0.0.0,:: --port 27017'
 
 ```
 - These Config server replica set stores all metadata and cluster configuration.
@@ -85,10 +91,12 @@ docker run --hostname mongoconfig3 --network mongo_bridge -p 27067:27017 --name 
 #### Create Routers:
 ```
 docker run --hostname mongosrouter1 --network mongo_bridge -p 27077:27017 --name mongosrouter1 -d mongo 
-bash -c 'mongos --configdb mongoreplicaset1conf/mongoconfig1:27017,mongoconfig2:27017,mongoconfig3:27017 --bind_ip=0.0.0.0,:: --port 27017'
+bash -c 'mongos --configdb mongoreplicaset1conf/mongoconfig1:27017,mongoconfig2:27017,mongoconfig3:27017 
+--bind_ip=0.0.0.0,:: --port 27017'
 
 docker run --hostname mongosrouter2 --network mongo_bridge -p 27087:27017 --name mongosrouter2 -d mongo 
-bash -c 'mongos --configdb mongoreplicaset1conf/mongoconfig1:27017,mongoconfig2:27017,mongoconfig3:27017 --bind_ip=0.0.0.0,:: --port 27017'
+bash -c 'mongos --configdb mongoreplicaset1conf/mongoconfig1:27017,mongoconfig2:27017,mongoconfig3:27017
+--bind_ip=0.0.0.0,:: --port 27017'
 ```
 These routers acts as an interface between client application and shards.
  Mongos routers are dependent on config server, so with --configdb param to get metadata and config information from config server replicaset.
@@ -100,7 +108,8 @@ This will assign primary and secondary replica set for config servers.
 ```
  docker exec -it mongoconfig1 bash -c 
 "echo 'rs.initiate({_id: \"mongoreplicaset1conf\",configsvr: true, 
-members: [{ _id : 0, host : \"mongoconfig1\" },{ _id : 1, host : \"mongoconfig2\" }, { _id : 2, host : \"mongoconfig3\" }]})' | mongo"
+members: [{ _id : 0, host : \"mongoconfig1\" },{ _id : 1, host : \"mongoconfig2\" }, 
+{ _id : 2, host : \"mongoconfig3\" }]})' | mongo"
 ```
 
 #### Inititate the Shard node replica set:
@@ -111,7 +120,8 @@ This will assign primary and secondary replica set for Shard nodes.
  ```
  docker exec -it mongoshard1 bash -c 
 "echo 'rs.initiate({_id : \"mongoreplicaset1shard\", 
-members: [{ _id : 0, host : \"mongoshard1\" },{ _id : 1, host : \"mongoshard2\" },{ _id : 2, host : \"mongoshard3\" }]})' | mongo"
+members: [{ _id : 0, host : \"mongoshard1\" },{ _id : 1, host : \"mongoshard2\" },
+{ _id : 2, host : \"mongoshard3\" }]})' | mongo"
 ```
 #### Add shards to Router:
 
